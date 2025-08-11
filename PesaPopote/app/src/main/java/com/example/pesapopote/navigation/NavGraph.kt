@@ -7,7 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.pesapopote.ui.screens.*
+import com.example.pesapopote.ui.screens.HomeScreen
+import com.example.pesapopote.ui.screens.LoginScreen
+import com.example.pesapopote.ui.screens.OnboardingScreen
+import com.example.pesapopote.ui.screens.RegisterScreen
+import com.example.pesapopote.ui.screens.SendScreen
+import com.example.pesapopote.ui.screens.SettingsScreen
+import com.example.pesapopote.ui.screens.WalletScreen
 import com.example.pesapopote.util.UserSessionManager
 
 @Composable
@@ -53,7 +59,7 @@ fun NavGraph(
 
             composable("login") {
                 LoginScreen(
-                    onLogin = { email, password ->
+                    onLoginSuccess = {
                         navController.navigate("home") {
                             popUpTo("login") { inclusive = true }
                         }
@@ -71,6 +77,12 @@ fun NavGraph(
                     },
                     onNavigateToWallet = {
                         navController.navigate("wallet")
+                    },
+                    onNavigateToSettings = {
+                        navController.navigate("settings")
+                    },
+                    onNavigateToSend = {
+                        navController.navigate("send")
                     }
                 )
             }
@@ -89,10 +101,10 @@ fun NavGraph(
             composable("send") {
                 SendScreen(
                     onRechargeClick = {
-                        // TODO: Navigate to recharge if implemented
+                        // TODO: Implement recharge navigation or logic
                     },
                     onSendClick = { address, amount ->
-                        // TODO: Handle sending logic
+                        // TODO: Implement send logic
                     }
                 )
             }

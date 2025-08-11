@@ -13,13 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.pesapopote.ui.theme.*
 
-// App-wide color palette
-//val primaryBlue = Color(0xFF1E88E5)
-//val accentGold = Color(0xFFFFC107)
-//val backgroundLight = Color(0xFFFFFFFF)
-//val textDark = Color(0xFF263238)
-//val logoutRed = Color(0xFFD32F2F)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -107,7 +100,7 @@ fun LanguageDropdown() {
             value = selectedLanguage,
             onValueChange = {},
             label = { Text("Language", color = textDark) },
-            colors = TextFieldDefaults.colors(
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
                 focusedContainerColor = backgroundLight,
                 unfocusedContainerColor = backgroundLight,
                 focusedTextColor = textDark,
@@ -116,7 +109,9 @@ fun LanguageDropdown() {
                 unfocusedIndicatorColor = primaryBlue
             ),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()  // <---- **This is the key fix!**
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -151,7 +146,7 @@ fun CurrencyDropdown() {
             value = selectedCurrency,
             onValueChange = {},
             label = { Text("Currency", color = textDark) },
-            colors = TextFieldDefaults.colors(
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
                 focusedContainerColor = backgroundLight,
                 unfocusedContainerColor = backgroundLight,
                 focusedTextColor = textDark,
@@ -160,7 +155,9 @@ fun CurrencyDropdown() {
                 unfocusedIndicatorColor = primaryBlue
             ),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()  // <---- **This is the key fix!**
         )
         ExposedDropdownMenu(
             expanded = expanded,
