@@ -52,7 +52,6 @@ fun HomeScreen(
     var isLoadingBalance by remember { mutableStateOf(false) }
     var balanceError by remember { mutableStateOf<String?>(null) }
 
-    // Function to refresh balance
     fun refreshBalance() {
         coroutineScope.launch {
             if (balanceManager.hasWallet()) {
@@ -81,7 +80,6 @@ fun HomeScreen(
         }
     }
 
-    // Fetch wallet balance using the shared balance manager
     LaunchedEffect(Unit) {
         if (balanceManager.hasWallet()) {
             isLoadingBalance = true
@@ -97,7 +95,6 @@ fun HomeScreen(
                 }
             }
 
-            // Then fetch fresh balance
             val balanceResult = balanceManager.getBalance()
             isLoadingBalance = false
 
@@ -166,7 +163,6 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Only show HomeTab content when Home is selected
             if (selectedIndex == 0) {
                 HomeTab(
                     userName = userName,
@@ -266,7 +262,6 @@ fun HomeTab(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Wallet Balance Card - matches WalletScreen design
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = primaryBlue.copy(alpha = 0.1f))
@@ -349,13 +344,10 @@ fun HomeTab(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // USD equivalent - only show when we have a valid balance
                     when {
                         !hasWallet || balanceError != null -> {
-                            // Don't show USD equivalent for error states
                         }
                         isLoadingBalance -> {
-                            // Don't show USD equivalent while loading balance
                         }
                         isLoadingRate -> {
                             Text(
@@ -385,7 +377,6 @@ fun HomeTab(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Quick Actions Section
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -422,7 +413,6 @@ fun HomeTab(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Recent Transactions Section
             Text(
                 "Recent Transactions",
                 style = MaterialTheme.typography.titleMedium,

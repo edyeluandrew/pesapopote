@@ -103,7 +103,6 @@ fun SendScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Exchange Rate and Fee Calculation Card
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -296,7 +295,6 @@ fun SendScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Withdraw States - Updated flow
         var showCountrySelection by remember { mutableStateOf(false) }
         var selectedCountry by remember { mutableStateOf<Country?>(null) }
         var showWithdrawOptions by remember { mutableStateOf(false) }
@@ -313,7 +311,6 @@ fun SendScreen(
             Text("Withdraw Funds", color = accentGold)
         }
 
-        // Country Selection Dialog
         if (showCountrySelection) {
             AlertDialog(
                 onDismissRequest = { showCountrySelection = false },
@@ -370,7 +367,6 @@ fun SendScreen(
             )
         }
 
-        // Withdrawal Method Options Dialog (Mobile Money vs Bank for selected country)
         if (showWithdrawOptions && selectedCountry != null) {
             AlertDialog(
                 onDismissRequest = {
@@ -388,7 +384,6 @@ fun SendScreen(
                 },
                 text = {
                     Column {
-                        // Mobile Money Option
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -412,7 +407,6 @@ fun SendScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Bank Option
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -446,7 +440,6 @@ fun SendScreen(
             )
         }
 
-        // Mobile Money Providers List (filtered by selected country)
         if (showMobileMoneyList && selectedCountry != null) {
             AlertDialog(
                 onDismissRequest = {
@@ -507,7 +500,6 @@ fun SendScreen(
             )
         }
 
-        // Bank Providers List (filtered by selected country)
         if (showBankList && selectedCountry != null) {
             AlertDialog(
                 onDismissRequest = {
@@ -568,7 +560,6 @@ fun SendScreen(
             )
         }
 
-        // Withdrawal Details Dialog
         if (showMethodDetails && selectedWithdrawMethod != null) {
             WithdrawDetailsDialog(
                 method = selectedWithdrawMethod!!,
@@ -578,7 +569,6 @@ fun SendScreen(
                     selectedCountry = null
                 },
                 onConfirm = { withdrawAmount, accountDetails ->
-                    // Handle withdrawal logic here
                     showMethodDetails = false
                     selectedWithdrawMethod = null
                     selectedCountry = null
@@ -598,7 +588,6 @@ suspend fun fetchXlmToUsd(): Double? = withContext(Dispatchers.IO) {
         usdRate?.toDoubleOrNull()
     } catch (e: Exception) {
         println("fetchXlmToUsd error: ${e.message}")
-        // Fallback to alternative API
         try {
             val fallbackResponse = URL("https://api.coingecko.com/api/v3/simple/price?ids=stellar&vs_currencies=usd").readText()
             val fallbackJson = Json.parseToJsonElement(fallbackResponse).jsonObject
@@ -618,16 +607,13 @@ suspend fun fetchStellarBaseFee(): Double? = withContext(Dispatchers.IO) {
             ?: json["mode_accepted_fee"]?.jsonPrimitive?.content
             ?: json["min_accepted_fee"]?.jsonPrimitive?.content
 
-        // Convert stroops to XLM (1 XLM = 10,000,000 stroops)
         feeStroops?.toDoubleOrNull()?.div(10_000_000.0)
     } catch (e: Exception) {
         println("fetchStellarBaseFee error: ${e.message}")
-        // Return a reasonable default fee (100 stroops = 0.00001 XLM)
         0.00001
     }
 }
 
-// Data classes for countries and withdrawal providers
 data class Country(
     val code: String,
     val name: String,
@@ -745,7 +731,6 @@ fun getMobileMoneyProviders(): List<WithdrawProvider> {
 
 fun getBankProviders(): List<WithdrawProvider> {
     return listOf(
-        // Uganda Banks
         WithdrawProvider(
             "Stanbic Bank", "🇺🇬", "Uganda", "UG", "bank",
             accountValidation = AccountValidation(9, 13, null, "9-13 digit account number")
@@ -763,7 +748,6 @@ fun getBankProviders(): List<WithdrawProvider> {
             accountValidation = AccountValidation(10, 13, null, "10-13 digit account number")
         ),
 
-        // Kenya Banks
         WithdrawProvider(
             "Equity Bank", "🇰🇪", "Kenya", "KE", "bank",
             accountValidation = AccountValidation(10, 13, null, "10-13 digit account number")
@@ -781,7 +765,6 @@ fun getBankProviders(): List<WithdrawProvider> {
             accountValidation = AccountValidation(9, 12, null, "9-12 digit account number")
         ),
 
-        // Tanzania Banks
         WithdrawProvider(
             "CRDB Bank", "🇹🇿", "Tanzania", "TZ", "bank",
             accountValidation = AccountValidation(13, 16, null, "13-16 digit account number")
@@ -795,7 +778,6 @@ fun getBankProviders(): List<WithdrawProvider> {
             accountValidation = AccountValidation(13, 13, null, "13 digit account number")
         ),
 
-        // Rwanda Banks
         WithdrawProvider(
             "Bank of Kigali", "🇷🇼", "Rwanda", "RW", "bank",
             accountValidation = AccountValidation(10, 16, null, "10-16 digit account number")
@@ -809,7 +791,6 @@ fun getBankProviders(): List<WithdrawProvider> {
             accountValidation = AccountValidation(10, 12, null, "10-12 digit account number")
         ),
 
-        // Nigeria Banks
         WithdrawProvider(
             "GTBank", "🇳🇬", "Nigeria", "NG", "bank",
             accountValidation = AccountValidation(10, 10, null, "10 digit NUBAN account number")
@@ -831,7 +812,6 @@ fun getBankProviders(): List<WithdrawProvider> {
             accountValidation = AccountValidation(10, 10, null, "10 digit NUBAN account number")
         ),
 
-        // Ghana Banks
         WithdrawProvider(
             "GCB Bank", "🇬🇭", "Ghana", "GH", "bank",
             accountValidation = AccountValidation(13, 13, null, "13 digit account number")
@@ -845,7 +825,6 @@ fun getBankProviders(): List<WithdrawProvider> {
             accountValidation = AccountValidation(12, 14, null, "12-14 digit account number")
         ),
 
-        // South Africa Banks
         WithdrawProvider(
             "Standard Bank", "🇿🇦", "South Africa", "ZA", "bank",
             accountValidation = AccountValidation(9, 11, null, "9-11 digit account number")
@@ -869,16 +848,13 @@ fun getBankProviders(): List<WithdrawProvider> {
     )
 }
 
-// Validation Functions
 fun validatePhoneNumber(phoneNumber: String, validation: PhoneValidation): String? {
     val cleanPhone = phoneNumber.replace(Regex("[^0-9]"), "")
 
-    // Check length
     if (cleanPhone.length < validation.minLength || cleanPhone.length > validation.maxLength) {
         return "Phone number must be ${validation.minLength}-${validation.maxLength} digits"
     }
 
-    // Check prefix
     val hasValidPrefix = validation.prefixes.any { prefix ->
         cleanPhone.startsWith(prefix)
     }
@@ -887,30 +863,26 @@ fun validatePhoneNumber(phoneNumber: String, validation: PhoneValidation): Strin
         return "Phone number must start with: ${validation.prefixes.joinToString(", ")}"
     }
 
-    return null // Valid
+    return null
 }
 
 fun validateAccountNumber(accountNumber: String, validation: AccountValidation): String? {
     val cleanAccount = accountNumber.replace(Regex("[^0-9]"), "")
 
-    // Check if it's all digits
     if (cleanAccount != accountNumber.replace(Regex("\\s"), "")) {
         return "Account number should contain only digits and spaces"
     }
-
-    // Check length
     if (cleanAccount.length < validation.minLength || cleanAccount.length > validation.maxLength) {
         return validation.description
     }
 
-    // Additional pattern validation if specified
     validation.pattern?.let { pattern ->
         if (!cleanAccount.matches(Regex(pattern))) {
             return validation.description
         }
     }
 
-    return null // Valid
+    return null
 }
 
 fun formatPhoneNumber(phoneNumber: String, countryCode: String): String {
@@ -937,7 +909,6 @@ fun WithdrawDetailsDialog(
     val provider = (getMobileMoneyProviders() + getBankProviders()).find { it.name == method }
     val isMobileMoney = provider?.type == "mobile_money"
 
-    // Validate input in real-time
     LaunchedEffect(accountNumber) {
         if (accountNumber.isNotBlank()) {
             validationError = if (isMobileMoney) {
@@ -1030,7 +1001,6 @@ fun WithdrawDetailsDialog(
                     isError = validationError != null
                 )
 
-                // Show validation error
                 if (validationError != null) {
                     Text(
                         validationError!!,
@@ -1057,7 +1027,6 @@ fun WithdrawDetailsDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Provider-specific information
                 Card(
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
                 ) {

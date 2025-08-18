@@ -4,8 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
-// Import from Color.kt
-// You already have these colors defined — just use them
 private val LightColorScheme = lightColorScheme(
     primary = primaryBlue,
     secondary = accentGold,

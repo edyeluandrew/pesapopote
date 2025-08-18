@@ -56,12 +56,10 @@ fun RegisterScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    // Email validation helper
     fun isValidEmail(input: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(input).matches()
     }
 
-    // Password validation helpers
     fun hasUpperCase(pw: String) = pw.any { it.isUpperCase() }
     fun hasLowerCase(pw: String) = pw.any { it.isLowerCase() }
     fun hasDigit(pw: String) = pw.any { it.isDigit() }
@@ -99,7 +97,6 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Country Dropdown
         ExposedDropdownMenuBox(
             expanded = countryExpanded,
             onExpandedChange = { countryExpanded = !countryExpanded }
@@ -144,7 +141,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Email with validation on change
         OutlinedTextField(
             value = email,
             onValueChange = {
@@ -171,7 +167,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Password with visibility toggle
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -188,7 +183,6 @@ fun RegisterScreen(
             singleLine = true
         )
 
-        // Live password checklist
         Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
             PasswordRequirement("At least 8 characters", hasMinLength(password))
             PasswordRequirement("At least one uppercase letter", hasUpperCase(password))
@@ -199,7 +193,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Confirm Password with visibility toggle
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
@@ -228,14 +221,23 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                // Double check before saving session and proceeding
                 if (!isFormValid) {
                     errorText = "Please fill all fields correctly."
                     return@Button
                 }
-                errorText = ""
+
                 val sessionManager = UserSessionManager(context)
+                val existingEmail = sessionManager.getUserEmail()
+                if (existingEmail != null) {
+                    errorText = "User already registered. Please login instead."
+                    return@Button
+                }
+
+                errorText = ""
+
                 sessionManager.saveUserSession(email = email.trim(), fullName = fullName.trim())
+                sessionManager.saveUserPassword(password) // THIS WAS MISSING!
+
                 onRegisterSuccess()
             },
             enabled = isFormValid,

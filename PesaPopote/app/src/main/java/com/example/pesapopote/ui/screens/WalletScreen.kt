@@ -41,7 +41,6 @@ enum class WalletState {
 data class WalletCreationResult(val success: Boolean, val error: String?, val publicKey: String?, val secretKey: String?)
 data class WalletImportResult(val success: Boolean, val error: String?, val publicKey: String?)
 
-// Biometric/PIN authentication states
 data class AuthenticationState(
     val isAuthenticated: Boolean = false,
     val showPinDialog: Boolean = false,
@@ -71,11 +70,9 @@ fun WalletScreen(navController: NavHostController, context: Context = LocalConte
     var isImporting by remember { mutableStateOf(false) }
     var importError by remember { mutableStateOf<String?>(null) }
 
-    // Authentication state for viewing secret key
     var authState by remember { mutableStateOf(AuthenticationState()) }
     var showSecretKey by remember { mutableStateOf(false) }
 
-    // Show back button only when not in main wallet view states
     val showBackButton = walletState in listOf(
         WalletState.CREATING_WALLET,
         WalletState.IMPORTING_WALLET,
@@ -83,14 +80,12 @@ fun WalletScreen(navController: NavHostController, context: Context = LocalConte
         WalletState.SETUP_PIN
     )
 
-    // Helper function to load balance using the shared balance manager
     suspend fun loadWalletBalance() {
         val balanceResult = balanceManager.getBalance()
         balance = balanceResult.balance ?: "Error"
         errorMessage = balanceResult.error
     }
 
-    // On first composition and when returning to this screen, reload wallet data from prefs
     LaunchedEffect(Unit) {
         walletState = WalletState.CHECKING
         withContext(Dispatchers.IO) {
@@ -125,14 +120,12 @@ fun WalletScreen(navController: NavHostController, context: Context = LocalConte
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Top App Bar with conditional back button
             if (showBackButton) {
                 TopAppBar(
                     title = { Text("MyStellar Wallet") },
                     navigationIcon = {
                         IconButton(
                             onClick = {
-                                // Reset states and go back to main wallet view
                                 walletState = if (walletManager.hasWallet()) WalletState.WALLET_EXISTS else WalletState.NO_WALLET
                                 importSecretKey = ""
                                 importError = null
@@ -150,7 +143,6 @@ fun WalletScreen(navController: NavHostController, context: Context = LocalConte
                 )
             }
 
-            // Main content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -178,7 +170,6 @@ fun WalletScreen(navController: NavHostController, context: Context = LocalConte
                                     publicKey = creationResult.publicKey
                                     secretKey = creationResult.secretKey
 
-                                    // Check if PIN is set up
                                     if (!walletManager.isPinSet()) {
                                         walletState = WalletState.SETUP_PIN
                                         authState = authState.copy(showPinSetupDialog = true, isSettingUpPin = true)
@@ -217,7 +208,6 @@ fun WalletScreen(navController: NavHostController, context: Context = LocalConte
                                         publicKey = importResult.publicKey
                                         secretKey = importSecretKey
 
-                                        // Check if PIN is set up
                                         if (!walletManager.isPinSet()) {
                                             walletState = WalletState.SETUP_PIN
                                             authState = authState.copy(showPinSetupDialog = true, isSettingUpPin = true)
@@ -670,7 +660,6 @@ fun WalletInfoContent(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Public Key Section
                 Text("Public Address", style = MaterialTheme.typography.labelMedium, color = textDark)
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -689,7 +678,6 @@ fun WalletInfoContent(
 
                 Divider()
 
-                // Secret Key Section
                 Text("Secret Key", style = MaterialTheme.typography.labelMedium, color = logoutRed)
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -886,7 +874,6 @@ fun PinAuthenticationDialog(
     )
 }
 
-// Helper functions for biometric authentication
 fun isBiometricAvailable(context: Context): Boolean {
     val biometricManager = BiometricManager.from(context)
     return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
@@ -932,14 +919,12 @@ fun authenticateWithBiometric(
     biometricPrompt.authenticate(promptInfo)
 }
 
-// --- Logic helpers ---
 suspend fun createNewWallet(walletManager: UserSessionManager): WalletCreationResult = withContext(Dispatchers.IO) {
     try {
         val keyPair = KeyPair.random()
         val newPublic = keyPair.accountId
         val newSecret = String(keyPair.secretSeed)
 
-        // Fund the account with Friendbot (testnet)
         val request = Request.Builder().url("https://friendbot.stellar.org/?addr=$newPublic").build()
         val response = OkHttpClient().newCall(request).execute()
 
@@ -959,7 +944,6 @@ suspend fun importWallet(secretKey: String, walletManager: UserSessionManager): 
         val keyPair = KeyPair.fromSecretSeed(secretKey)
         val publicKey = keyPair.accountId
 
-        // Verify the account exists on the network
         Server("https://horizon-testnet.stellar.org").accounts().account(publicKey)
 
         walletManager.saveWalletKeys(publicKey, secretKey)

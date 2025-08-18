@@ -101,10 +101,8 @@ fun NavGraph(
             composable("send") {
                 SendScreen(
                     onRechargeClick = {
-                        // TODO: Implement recharge navigation or logic
                     },
                     onSendClick = { address, amount ->
-                        // TODO: Implement send logic
                     }
                 )
             }

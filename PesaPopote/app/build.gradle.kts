@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android") version "2.0.0"
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0" // 🔥 Required for JSON parsing
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
 }
 
 android {
@@ -37,12 +37,10 @@ android {
 }
 
 dependencies {
-    // 🔷 Core Android Dependencies
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-    // 🔷 Jetpack Compose
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.compose.ui:ui:1.6.5")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.5")
@@ -50,35 +48,27 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.6.5")
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    // 🔷 Compose Runtime and State Management
     implementation("androidx.compose.runtime:runtime:1.6.5")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.5")
-    implementation("androidx.compose.ui:ui-util:1.6.5") // ✅ Utility functions for animation & UI logic
+    implementation("androidx.compose.ui:ui-util:1.6.5")
 
-    // 🔷 Biometric Authentication
     implementation("androidx.biometric:biometric:1.1.0")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
 
-    // 🔷 Stellar SDK and Networking
     implementation("network.lightsail:stellar-sdk:1.5.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // 🔷 Coroutines for async operations
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
-    // 🔷 JSON Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    // 🔷 Security and Cryptography
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
-    // 🔷 Compose Animation
     implementation("androidx.compose.animation:animation:1.6.5")
     implementation("androidx.compose.animation:animation-core:1.6.5")
 
-    // 🔷 Testing Dependencies
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
@@ -88,7 +78,6 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.5")
     androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
-    // 🔷 Debug Dependencies
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.5")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.5")
 }

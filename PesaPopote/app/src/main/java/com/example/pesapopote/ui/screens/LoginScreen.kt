@@ -36,6 +36,7 @@ fun LoginScreen(
     var emailError by remember { mutableStateOf<String?>(null) }
     var passwordError by remember { mutableStateOf<String?>(null) }
     var generalError by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     fun isValidEmail(input: String): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(input).matches()
@@ -67,8 +68,17 @@ fun LoginScreen(
         val savedEmail = sessionManager.getUserEmail()
         val savedPassword = sessionManager.getUserPassword()
 
-        if (savedEmail == null || savedPassword == null) {
+        println("Debug - Saved email: $savedEmail")
+        println("Debug - Saved password exists: ${savedPassword != null}")
+        println("Debug - Input email: ${email.trim()}")
+
+        if (savedEmail == null) {
             generalError = "No registered user found. Please register first."
+            return false
+        }
+
+        if (savedPassword == null) {
+            generalError = "User registration incomplete. Please register again."
             return false
         }
 
@@ -114,6 +124,7 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
             isError = emailError != null,
             modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = primaryBlue,
                 unfocusedBorderColor = Color.Gray,
@@ -146,6 +157,7 @@ fun LoginScreen(
                 Text(icon, modifier = Modifier.clickable { passwordVisible = !passwordVisible })
             },
             isError = passwordError != null,
+            enabled = !isLoading,
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = primaryBlue,
@@ -176,28 +188,56 @@ fun LoginScreen(
         Button(
             onClick = {
                 if (validateInputs()) {
+                    isLoading = true
                     if (verifyLogin()) {
+                        sessionManager.saveUserSession(email.trim(), sessionManager.getFullName() ?: "")
                         onLoginSuccess()
                     }
+                    isLoading = false
                 }
             },
-            enabled = email.isNotBlank() && password.isNotBlank(),
+            enabled = email.isNotBlank() && password.isNotBlank() && !isLoading,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = accentGold)
         ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    color = primaryBlue,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    "Login",
+                    fontWeight = FontWeight.Bold,
+                    color = primaryBlue
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(
+            onClick = onNavigateToRegister,
+            enabled = !isLoading
+        ) {
             Text(
-                "Login",
-                fontWeight = FontWeight.Bold,
+                "Don't have an account? Register",
                 color = primaryBlue
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        TextButton(onClick = onNavigateToRegister) {
+        TextButton(
+            onClick = {
+                sessionManager.clearSession()
+                generalError = "Session cleared. Please register again."
+            }
+        ) {
             Text(
-                "Don't have an account? Register",
-                color = primaryBlue
+                "Clear Session (Debug)",
+                color = Color.Red,
+                fontSize = 12.sp
             )
         }
     }

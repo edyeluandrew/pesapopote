@@ -41,23 +41,19 @@ fun SettingsScreen(
                 .fillMaxSize(),
             contentPadding = PaddingValues(16.dp)
         ) {
-            // Account Section
             item { SettingsSectionHeader("Account") }
             item { LanguageDropdown() }
             item { CurrencyDropdown() }
             item { SwitchSetting(title = "Enable Biometric Login", icon = Icons.Default.Fingerprint) }
 
-            // Security Section
             item { SettingsSectionHeader("Security") }
             item { SwitchSetting(title = "Two-Factor Authentication", icon = Icons.Default.Lock) }
             item { SimpleClickableSetting(title = "Change Password", icon = Icons.Default.Key) }
 
-            // Support Section
             item { SettingsSectionHeader("Help & Support") }
             item { SimpleClickableSetting(title = "Contact Support", icon = Icons.Default.Email) }
             item { SimpleClickableSetting(title = "Terms & Conditions", icon = Icons.Default.Description) }
 
-            // Logout Button
             item {
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(
@@ -72,7 +68,6 @@ fun SettingsScreen(
     }
 }
 
-// Reusable components
 
 @Composable
 fun SettingsSectionHeader(title: String) {
@@ -111,7 +106,7 @@ fun LanguageDropdown() {
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()  // <---- **This is the key fix!**
+                .menuAnchor()
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -157,7 +152,7 @@ fun CurrencyDropdown() {
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()  // <---- **This is the key fix!**
+                .menuAnchor()
         )
         ExposedDropdownMenu(
             expanded = expanded,
